@@ -1,0 +1,7 @@
+/mvnw.cmd
+/mvnw
+./docker-compose/.env
+/docker-compose/.env
+/.idea/
+/.run/
+/target/
