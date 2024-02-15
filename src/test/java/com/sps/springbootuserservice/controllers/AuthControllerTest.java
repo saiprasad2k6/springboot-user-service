@@ -1,6 +1,7 @@
 package com.sps.springbootuserservice.controllers;
 
 import com.sps.springbootuserservice.dtos.LoginRequestDto;
+import com.sps.springbootuserservice.dtos.LoginServiceDto;
 import com.sps.springbootuserservice.dtos.UserDto;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,9 @@ public class AuthControllerTest {
         UserDto userDtoMockResponse = new UserDto();
         userDtoMockResponse.setEmail("abc@gmail.com");
         userDtoMockResponse.setRoles(new ArrayList<>());
-        when(authService.login(any(LoginRequestDto.class))).thenReturn(userDtoMockResponse);
+
+        LoginServiceDto mockLoginServiceDto = new LoginServiceDto(userDtoMockResponse, "somtoken");
+        when(authService.login(any(LoginRequestDto.class))).thenReturn(mockLoginServiceDto);
 
         LoginRequestDto loginRequestDtoMock = new LoginRequestDto();
         loginRequestDtoMock.setEmail("abc@gmail.com");

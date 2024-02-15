@@ -10,23 +10,19 @@ import com.sps.springbootuserservice.repositories.SessionRepository;
 import com.sps.springbootuserservice.repositories.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Optional;
 
-@Service
-@Primary
-public class AuthServiceImpl implements AuthService {
+public abstract class AbstractAuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
-    private SessionRepository sessionRepository;
+    protected SessionRepository sessionRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -41,17 +37,13 @@ public class AuthServiceImpl implements AuthService {
         if (!bCryptPasswordEncoder.matches(loginRequestDto.getPassword(), user.getPassword()))
             throw new RuntimeException("Wrong Username password");
 
-        //Save the Session
-        Session session = new Session();
-        session.setUser(user);
-        session.setToken(RandomStringUtils.randomAlphanumeric(30));
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 1);
-        session.setExpiringAt(calendar.getTime());
+        Session session = createUserSession(user);
         sessionRepository.save(session);
 
         return new LoginServiceDto(UserDto.from(user), session.getToken());
     }
+
+    abstract Session createUserSession(User user);
 
     @Override
     public void logout(LogoutDto logoutDto) throws Exception {
@@ -79,4 +71,5 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
         return UserDto.from(user);
     }
+
 }
