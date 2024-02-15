@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 @Primary
-public class LocalAuthService implements AuthService {
+public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -33,7 +33,7 @@ public class LocalAuthService implements AuthService {
 
     @Override
     public LoginServiceDto login(LoginRequestDto loginRequestDto) throws Exception {
-        Optional<User> optionalUser = userRepository.findByEmail(loginRequestDto.getEmail());
+        Optional<User> optionalUser = Optional.ofNullable(userRepository.findByEmail(loginRequestDto.getEmail()));
         if (optionalUser.isEmpty())
             throw new Exception("User Not Found");
         User user = optionalUser.get();
@@ -71,7 +71,7 @@ public class LocalAuthService implements AuthService {
         user.setEmail(signupRequestDto.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(signupRequestDto.getPassword()));
 
-        Optional<User> userOptional = userRepository.findByEmail(signupRequestDto.getEmail());
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(signupRequestDto.getEmail()));
         if (userOptional.isPresent()) throw new UserAlreadyExistsException(user.getEmail() + " already exists");
 
         Role role = roleRepository.findByRole("USER");
