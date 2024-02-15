@@ -1,14 +1,11 @@
 package com.sps.springbootuserservice.services;
 
-import com.sps.springbootuserservice.dtos.LoginRequestDto;
-import com.sps.springbootuserservice.dtos.LogoutRequestDto;
-import com.sps.springbootuserservice.dtos.UserDto;
-import com.sps.springbootuserservice.dtos.SignupRequestDto;
+import com.sps.springbootuserservice.dtos.*;
 
 public interface AuthService {
-    UserDto login(LoginRequestDto loginRequestDto) throws Exception;
+    LoginResponseDto login(LoginRequestDto loginRequestDto) throws Exception;
 
-    void logout(LogoutRequestDto logoutRequestDto);
+    void logout(LogoutDto logoutServiceRequestDto) throws Exception;
 
     UserDto signup(SignupRequestDto signupRequestDto) throws Exception;
 }
