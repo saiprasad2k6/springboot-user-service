@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SessionRepository extends JpaRepository<Session, Long> {
     Session findSessionByToken(String token);
+
+    Session findSessionByTokenAndUser_Email(String token, String email);
 }

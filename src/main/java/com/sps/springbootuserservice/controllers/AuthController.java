@@ -1,6 +1,7 @@
 package com.sps.springbootuserservice.controllers;
 
 import com.sps.springbootuserservice.dtos.*;
+import com.sps.springbootuserservice.model.SessionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,12 @@ public class AuthController {
     public void logout(@RequestBody LogoutDto logoutDto, @CookieValue(name = "auth-token") String token) throws Exception {
         logoutDto.setToken(token);
         authService.logout(logoutDto);
+    }
+
+    @PostMapping("/validate")
+    public ResponseEntity<SessionStatus> validate(@RequestBody ValidateTokenDto validateTokenDto) {
+        SessionStatus sessionStatus = authService.validate(validateTokenDto.getToken(), validateTokenDto.getEmail());
+        return ResponseEntity.ok(sessionStatus);
     }
 
 }

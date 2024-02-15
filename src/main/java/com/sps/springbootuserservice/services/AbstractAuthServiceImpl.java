@@ -4,15 +4,15 @@ import com.sps.springbootuserservice.dtos.*;
 import com.sps.springbootuserservice.exceptions.UserAlreadyExistsException;
 import com.sps.springbootuserservice.model.Role;
 import com.sps.springbootuserservice.model.Session;
+import com.sps.springbootuserservice.model.SessionStatus;
 import com.sps.springbootuserservice.model.User;
 import com.sps.springbootuserservice.repositories.RoleRepository;
 import com.sps.springbootuserservice.repositories.SessionRepository;
 import com.sps.springbootuserservice.repositories.UserRepository;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Optional;
 
 public abstract class AbstractAuthServiceImpl implements AuthService {
@@ -26,6 +26,10 @@ public abstract class AbstractAuthServiceImpl implements AuthService {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    abstract Session createUserSession(User user);
+
+    abstract boolean validateToken(String token);
 
     @Override
     public LoginServiceDto login(LoginRequestDto loginRequestDto) throws Exception {
@@ -43,7 +47,6 @@ public abstract class AbstractAuthServiceImpl implements AuthService {
         return new LoginServiceDto(UserDto.from(user), session.getToken());
     }
 
-    abstract Session createUserSession(User user);
 
     @Override
     public void logout(LogoutDto logoutDto) throws Exception {
@@ -71,5 +74,19 @@ public abstract class AbstractAuthServiceImpl implements AuthService {
         userRepository.save(user);
         return UserDto.from(user);
     }
+
+    @Override
+    public SessionStatus validate(String token, String email) {
+        Session session = sessionRepository.findSessionByTokenAndUser_Email(token, email);
+        if (session.getStatus().equals(SessionStatus.ENDED)) return SessionStatus.ENDED;
+        if (session.getExpiringAt().before(new Date())) {
+            return SessionStatus.ENDED;
+        }
+
+        if (!validateToken(token)) return SessionStatus.ENDED;
+
+        return SessionStatus.ACTIVE;
+    }
+
 
 }
