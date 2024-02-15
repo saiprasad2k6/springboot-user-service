@@ -18,7 +18,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> signup(@RequestBody SignupRequestDto signupRequestDto) throws Exception {
+    public ResponseEntity<UserDto> signup(@RequestBody SignupDto signupRequestDto) throws Exception {
         UserDto userDto = authService.signup(signupRequestDto);
         if (userDto == null) throw new Exception("Unable to Register");
         return ResponseEntity.ok(userDto);
@@ -26,7 +26,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception {
-        LoginResponseDto responseDto = authService.login(loginRequestDto);
+        LoginServiceDto responseDto = authService.login(loginRequestDto);
         if (responseDto == null) throw new Exception("User Not Found");
 
         MultiValueMapAdapter<String, String> headers = new MultiValueMapAdapter<>(new HashMap<>());

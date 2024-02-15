@@ -1,6 +1,5 @@
 package com.sps.springbootuserservice.dtos;
 
-import com.sps.springbootuserservice.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class LoginResponseDto {
+public class LoginServiceDto {
     private UserDto userDto;
     private String token;
 }

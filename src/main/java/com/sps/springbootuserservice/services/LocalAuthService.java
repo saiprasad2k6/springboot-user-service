@@ -32,7 +32,7 @@ public class LocalAuthService implements AuthService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
-    public LoginResponseDto login(LoginRequestDto loginRequestDto) throws Exception {
+    public LoginServiceDto login(LoginRequestDto loginRequestDto) throws Exception {
         Optional<User> optionalUser = userRepository.findByEmail(loginRequestDto.getEmail());
         if (optionalUser.isEmpty())
             throw new Exception("User Not Found");
@@ -50,7 +50,7 @@ public class LocalAuthService implements AuthService {
         session.setExpiringAt(calendar.getTime());
         sessionRepository.save(session);
 
-        return new LoginResponseDto(UserDto.from(user), session.getToken());
+        return new LoginServiceDto(UserDto.from(user), session.getToken());
     }
 
     @Override
@@ -66,7 +66,7 @@ public class LocalAuthService implements AuthService {
     }
 
     @Override
-    public UserDto signup(SignupRequestDto signupRequestDto) throws UserAlreadyExistsException {
+    public UserDto signup(SignupDto signupRequestDto) throws UserAlreadyExistsException {
         User user = new User();
         user.setEmail(signupRequestDto.getEmail());
         user.setPassword(bCryptPasswordEncoder.encode(signupRequestDto.getPassword()));
