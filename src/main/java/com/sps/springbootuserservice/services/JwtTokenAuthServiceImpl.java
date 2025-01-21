@@ -49,6 +49,8 @@ public class JwtTokenAuthServiceImpl extends AbstractAuthServiceImpl {
         }
 
         Map<String, Object> jsonForJwt = new HashMap<>();
+        jsonForJwt.put("email", user.getEmail());
+        jsonForJwt.put("role", user.getRoles().stream().toList().get(0));
         jsonForJwt.put("createAt", new Date());
         jsonForJwt.put("expiryAt", findDateForExpiry());
 
