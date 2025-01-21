@@ -5,6 +5,7 @@ import com.sps.springbootuserservice.model.SessionStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMapAdapter;
 import org.springframework.web.bind.annotation.*;
@@ -30,8 +31,18 @@ public class AuthController {
         LoginServiceDto responseDto = authService.login(loginRequestDto);
         if (responseDto == null) throw new Exception("User Not Found");
 
+
+        // Creating the cookie
+        ResponseCookie cookie = ResponseCookie.from("auth-token", responseDto.getToken())
+                .httpOnly(true)  // Prevents JavaScript access
+                .secure(true)    // Ensures it's sent over HTTPS
+                .path("/")       // Available for all endpoints
+                .maxAge(7 * 24 * 60 * 60) // 7 days
+                .build();
+
         MultiValueMapAdapter<String, String> headers = new MultiValueMapAdapter<>(new HashMap<>());
-        headers.add(HttpHeaders.SET_COOKIE, "auth-token:" + responseDto.getToken());
+        headers.add(HttpHeaders.SET_COOKIE, "auth-token=" + responseDto.getToken());
+        //headers.add(HttpHeaders.SET_COOKIE,cookie.getValue());
         return new ResponseEntity<>(responseDto.getUserDto(), headers, HttpStatus.OK);
     }
 
