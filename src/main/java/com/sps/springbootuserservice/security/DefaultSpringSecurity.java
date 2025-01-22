@@ -6,10 +6,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
+//@Configuration
 public class DefaultSpringSecurity {
 
-    @Bean
+  //  @Bean
     public SecurityFilterChain filteringCriteria(HttpSecurity http) throws Exception {
 
         http
