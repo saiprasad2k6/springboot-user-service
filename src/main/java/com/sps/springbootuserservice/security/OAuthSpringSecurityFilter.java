@@ -60,7 +60,9 @@ public class OAuthSpringSecurityFilter {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
         http
+
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/user/*").authenticated()
                         .anyRequest().permitAll()
                 )
                 // Form login handles the redirect to the login page from the
@@ -84,8 +86,8 @@ public class OAuthSpringSecurityFilter {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("productservice")
-                .clientSecret(bCryptPasswordEncoder.encode("passwordofproductserviceclient"))
+                .clientId("userservice")
+                .clientSecret(bCryptPasswordEncoder.encode("userservicepassword"))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
