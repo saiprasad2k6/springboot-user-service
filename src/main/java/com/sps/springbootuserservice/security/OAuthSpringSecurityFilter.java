@@ -67,10 +67,7 @@ public class OAuthSpringSecurityFilter {
                                 new LoginUrlAuthenticationEntryPoint("/login"),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         )
-                )
-                // Accept access tokens for User Info and/or Client Registration
-                .oauth2ResourceServer((resourceServer) -> resourceServer
-                        .jwt(Customizer.withDefaults()));
+                );
         return http.build();
     }
 
@@ -79,15 +76,18 @@ public class OAuthSpringSecurityFilter {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
         http
-
-                .authorizeHttpRequests((authorize) -> authorize
-                        //.requestMatchers("/user/*").authenticated()
-                        //.anyRequest().permitAll()
-                        .anyRequest().authenticated()
+                .csrf().disable()  // Disables CSRF protection
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/auth/**").permitAll()   // Allow unauthenticated access to /auth/*
+                        .anyRequest().authenticated() // Ensure all other requests require authentication
                 )
+
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults())
+                // Accept access tokens for User Info and/or Client Registration
+                .oauth2ResourceServer((resourceServer) -> resourceServer
+                        .jwt(Customizer.withDefaults()));
 
         return http.build();
     }
@@ -142,8 +142,7 @@ public class OAuthSpringSecurityFilter {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
             keyPair = keyPairGenerator.generateKeyPair();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }
         return keyPair;
@@ -176,7 +175,6 @@ public class OAuthSpringSecurityFilter {
             }
         };
     }
-
 
 
 }
