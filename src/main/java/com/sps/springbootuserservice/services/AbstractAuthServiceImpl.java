@@ -69,8 +69,11 @@ public abstract class AbstractAuthServiceImpl implements AuthService {
         Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(signupRequestDto.getEmail()));
         if (userOptional.isPresent()) throw new UserAlreadyExistsException(user.getEmail() + " already exists");
 
-        Role role = roleRepository.findByRole("USER");
-        user.getRoles().add(role);
+        for (String roleString : signupRequestDto.getRoles()) {
+            Role role = roleRepository.findByRole(roleString.toUpperCase());
+            if(role !=null)  user.getRoles().add(role);
+        }
+
         userRepository.save(user);
         return UserDto.from(user);
     }
