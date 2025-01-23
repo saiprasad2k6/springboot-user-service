@@ -103,7 +103,7 @@ public class OAuthSpringSecurityFilter {
         return new InMemoryUserDetailsManager(userDetails);
     }
 
-    @Bean
+    //@Bean (since this is done by Database)
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("productservice")
